@@ -1,21 +1,9 @@
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import axios from 'axios'
+import { extractErrorMessage } from '@/common/utils/error'
 import { authApi } from '../api/auth.api'
 import { useAuthStore } from '../stores/auth.store'
 import type { SignupRequest } from '../types'
-
-/**
- * 서버 오류 응답에서 사용자에게 보여줄 메시지를 뽑아낸다.
- * @param error 발생한 예외
- * @param fallback 메시지를 못 찾았을 때 기본 문구
- */
-function extractMessage(error: unknown, fallback: string): string {
-    if (axios.isAxiosError(error)) {
-        return error.response?.data?.message ?? fallback
-    }
-    return fallback
-}
 
 /**
  * 인증 화면(로그인·회원가입)의 로직을 담는 composable (≈ Service).
@@ -41,7 +29,7 @@ export function useAuth() {
             const redirect = (route.query.redirect as string) || '/chat'
             await router.replace(redirect)
         } catch (error) {
-            errorMessage.value = extractMessage(error, '로그인에 실패했습니다.')
+            errorMessage.value = extractErrorMessage(error, '로그인에 실패했습니다.')
         } finally {
             loading.value = false
         }
@@ -63,7 +51,7 @@ export function useAuth() {
             await router.replace({ name: 'login', query: { signup: 'success' } })
             return true
         } catch (error) {
-            errorMessage.value = extractMessage(error, '회원가입에 실패했습니다.')
+            errorMessage.value = extractErrorMessage(error, '회원가입에 실패했습니다.')
             return false
         } finally {
             loading.value = false
