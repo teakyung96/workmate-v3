@@ -1,0 +1,44 @@
+# Build
+build/
+.gradle/
+out/
+bin/
+dist/
+node_modules/
+*.class
+
+# Vite / Vue
+workmate-vue/dist/
+*.local
+
+# IDE
+.settings/
+.project
+.classpath
+.factorypath
+.idea/
+*.iml
+.vscode/
+
+# Env & secrets
+# 비밀값(API 키·DB 비번)은 .env(git 미추적)로만. .env.example → .env 복사 방식
+.env
+*.local.yml
+application-local.yml
+
+# Claude Code 개인 설정
+.claude/
+.playwright-mcp/
+
+# 로컬 산출물
+docs/**/*.html
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Logs
+*.log
+
+# 런타임 업로드 산출물 (영수증 이미지 등)
+workmate-was/uploads/

@@ -1,0 +1,19 @@
+# 로컬 개발 환경 템플릿 — 이 파일을 application-local.yml 로 복사한 뒤 실제 값을 기재
+# (application-local.yml 은 .gitignore 대상이라 커밋되지 않는다)
+# DB 접속 정보는 이 파일에 직접 기재한다 (.env 는 docker compose 컨테이너 생성용)
+server:
+    port: 8081
+
+spring:
+    datasource:
+        # WSL2 도커 DB 사용 시 Windows 에서 localhost 포워딩이 불안정하면 WSL IP 사용 (wsl hostname -I)
+        url: jdbc:postgresql://localhost:5432/workmate_db
+        username: workmate
+        password: <.env 의 POSTGRES_PASSWORD 와 동일한 값>
+
+# 개인정보(이메일·전화번호) AES-256 암호화 키 — .env 환경변수 주입
+# 고정 IV 를 쓰는 결정적 암호화: 같은 평문 → 같은 암호문 (email UK·검색을 위해 필요, v1 방식 이식)
+app:
+    crypto:
+        aes-key: ${AES_SECRET_KEY}
+        aes-iv: ${AES_SECRET_IV}

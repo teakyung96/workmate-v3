@@ -1,0 +1,53 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.5.0'
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'com.workmate'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '17'
+
+// Spring Boot 3.2+ 에서 @RequestParam 등의 파라미터명을 리플렉션으로 감지하려면 필수
+tasks.withType(JavaCompile) {
+    options.compilerArgs += ['-parameters']
+    options.encoding = 'UTF-8'
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://repo.spring.io/milestone' }
+}
+
+dependencies {
+    // .env 파일을 자동으로 읽어 환경변수처럼 주입 — gradlew bootRun/IDE(STS 등) 실행 방식과 무관하게 동작
+    // 실제 OS 환경변수(운영 서버 등)가 있으면 그게 우선되고 .env는 로컬 폴백으로만 쓰인다
+    implementation 'me.paulschwarz:spring-dotenv:4.0.0'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.2'
+    implementation platform("org.springframework.ai:spring-ai-bom:1.1.8")
+    implementation 'org.springframework.ai:spring-ai-starter-model-google-genai'
+    // 임베딩 모델은 채팅 스타터에 포함되지 않는 별도 모듈 (없으면 EmbeddingModel 빈 미생성 → pgvector 기동 실패)
+    implementation 'org.springframework.ai:spring-ai-starter-model-google-genai-embedding'
+    implementation 'org.springframework.ai:spring-ai-starter-vector-store-pgvector'
+    runtimeOnly 'org.postgresql:postgresql'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    // BCrypt 만 필요 — 전체 Security 스타터는 WEB 레이어 담당이므로 crypto 모듈만
+    implementation 'org.springframework.security:spring-security-crypto'
+    // 무거운 조회(다중 조인·동적 검색·페이징)용 — 단순 CRUD는 계속 JPA 사용 (가이드 §2)
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+    // CryptoProperties(app.crypto.*) 바인딩에 필요한 AES 키를 테스트 JVM 에 주입한다.
+    // 운영/로컬은 .env 로 AES_SECRET_KEY/AES_SECRET_IV 를 주입하지만 테스트에는 환경변수가 없어
+    // @SpringBootTest 컨텍스트 로딩이 실패하므로, 실제 키와 무관한 더미를 여기서만 넣는다.
+    // (테스트 전용 더미 — 실제 키 아님. 암복호화 동작 자체는 AesCipherTest 가 별도로 검증한다)
+    environment 'AES_SECRET_KEY', 'MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY='
+    environment 'AES_SECRET_IV', 'MDEyMzQ1Njc4OWFiY2RlZg=='
+}

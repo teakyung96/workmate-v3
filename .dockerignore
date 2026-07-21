@@ -1,0 +1,18 @@
+# 빌드 컨텍스트에서 제외 — 이미지 빌드에 불필요하거나 비밀값이 담긴 것들
+.git
+.gradle
+**/build
+**/.gradle
+
+# workmate-vue 는 Gradle 모듈이 아니며, UMD 산출물은 이미 workmate-web static 에 커밋됨
+workmate-vue
+
+# 비밀값 (컨테이너는 docker 프로파일 + 환경변수로 접속하므로 이미지에 넣지 않는다)
+.env
+**/application-local.yml
+
+# 문서·IDE·로그
+docs
+.idea
+.vscode
+*.log

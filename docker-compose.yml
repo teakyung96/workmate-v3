@@ -1,0 +1,62 @@
+services:
+    db:
+        image: pgvector/pgvector:pg17
+        container_name: workmate-db
+        ports:
+            - "5432:5432"
+        environment:
+            POSTGRES_DB: ${POSTGRES_DB}
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+        volumes:
+            - workmate-db-data:/var/lib/postgresql/data
+            - ./db/init:/docker-entrypoint-initdb.d
+        # initdb 스크립트(스키마 생성)가 끝나야 healthy → was 가 준비된 DB 에만 붙는다
+        healthcheck:
+            test:
+                [
+                    "CMD-SHELL",
+                    "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}",
+                ]
+            interval: 5s
+            timeout: 5s
+            retries: 10
+
+    # ↓ was/web 은 'full' 프로파일에서만 뜬다 (기본 up 은 db 만 → 로컬 IDE 개발 흐름 보존)
+    #   개발 중 DB 만:  docker compose up -d db
+    #   전체 원클릭:    docker compose --profile full up --build
+    was:
+        profiles: ["full"]
+        build:
+            context: .
+            dockerfile: workmate-was/Dockerfile
+        container_name: workmate-was
+        ports:
+            - "8081:8081"
+        environment:
+            SPRING_PROFILES_ACTIVE: docker
+            DB_HOST: db
+            POSTGRES_DB: ${POSTGRES_DB}
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+            GEMINI_API_KEY: ${GEMINI_API_KEY}
+        depends_on:
+            db:
+                condition: service_healthy
+
+    web:
+        profiles: ["full"]
+        build:
+            context: .
+            dockerfile: workmate-web/Dockerfile
+        container_name: workmate-web
+        ports:
+            - "8080:8080"
+        environment:
+            SPRING_PROFILES_ACTIVE: docker
+            WAS_BASE_URL: http://was:8081
+        depends_on:
+            - was
+
+volumes:
+    workmate-db-data:

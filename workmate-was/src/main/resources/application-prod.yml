@@ -1,0 +1,11 @@
+# 운영 환경 — 모든 접속 정보는 OS 환경변수(또는 시크릿 관리 도구)로만 주입, 평문 기재 금지
+server:
+    port: 8081
+
+spring:
+    datasource:
+        url: jdbc:postgresql://${DB_HOST}:${DB_PORT:5432}/${POSTGRES_DB}
+        username: ${POSTGRES_USER}
+        password: ${POSTGRES_PASSWORD}
+    jpa:
+        show-sql: false
