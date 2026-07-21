@@ -39,3 +39,29 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+// ── SPA(workmate-vue) 빌드 산출물을 WEB 정적 리소스로 포함 (운영 서빙 배선) ──
+// processResources 단계에서 Vue 를 빌드(npm run build)하고 dist 를 static/ 으로 복사한다.
+// 결과적으로 `gradlew :workmate-web:bootRun`(또는 bootJar) 한 번으로 SPA 까지 8080 이 서빙한다.
+// (개발 중 프론트만 고칠 땐 Vite(5173) 사용 — 이 태스크는 WEB 빌드/실행 시에만 돈다.)
+def vueDir = file("${rootDir}/workmate-vue")
+
+tasks.register('buildVue', Exec) {
+    description = 'workmate-vue 를 프로덕션 빌드한다 (npm run build)'
+    group = 'build'
+    workingDir vueDir
+    def isWindows = System.getProperty('os.name').toLowerCase().contains('win')
+    if (isWindows) {
+        commandLine 'cmd', '/c', 'npm', 'run', 'build'
+    } else {
+        commandLine 'npm', 'run', 'build'
+    }
+}
+
+processResources {
+    dependsOn 'buildVue'
+    // Vue 빌드 산출물(dist)을 클래스패스의 static/ 에 얹는다 → SpaWebConfig 가 서빙
+    from("${vueDir}/dist") {
+        into 'static'
+    }
+}
