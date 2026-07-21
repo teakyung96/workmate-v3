@@ -1,0 +1,6 @@
+# 개발 서버 환경 — WAS 주소는 서버 환경변수로 주입
+server:
+    port: 8080
+
+was:
+    base-url: ${WAS_BASE_URL}

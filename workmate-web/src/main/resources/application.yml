@@ -1,0 +1,12 @@
+# 공통 설정 — 환경별 값(포트, WAS 주소)은 application-{local,dev,prod}.yml 에 둔다
+spring:
+    application:
+        name: workmate-web
+    profiles:
+        active: local # 기본은 로컬 개발, 배포 시 -Dspring.profiles.active 로 전환
+    servlet:
+        multipart:
+            max-file-size: 10MB # 영수증 이미지 프록시 업로드 허용 크기 (WAS 설정과 동일하게 유지)
+            max-request-size: 12MB
+    thymeleaf:
+        cache: false # prod 프로파일에서 true 로 재정의

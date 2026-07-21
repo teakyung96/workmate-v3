@@ -1,0 +1,41 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.5.0'
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'com.workmate'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '17'
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs += ['-parameters']
+    options.encoding = 'UTF-8'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // .env 파일을 자동으로 읽어 환경변수처럼 주입 — gradlew bootRun/IDE(STS 등) 실행 방식과 무관하게 동작
+    // 실제 OS 환경변수(운영 서버 등)가 있으면 그게 우선되고 .env는 로컬 폴백으로만 쓰인다
+    implementation 'me.paulschwarz:spring-dotenv:4.0.0'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    // WebClient(리액티브) — 채팅 SSE 스트리밍의 무버퍼 relay 전용 (F2-06). 블로킹 프록시는 RestClient 유지
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    // was.* 커스텀 프로퍼티(@ConfigurationProperties) IDE 자동완성 지원
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    // 개발용 자동 재시작·라이브리로드 — 템플릿/정적자원(css·js·html) 편집이 서버 재시작 없이 반영된다
+    // (Thymeleaf 캐시 자동 off). 운영 빌드에는 포함되지 않는다.
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

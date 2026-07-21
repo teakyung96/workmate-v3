@@ -1,0 +1,10 @@
+# 운영 환경 — WAS 주소는 OS 환경변수로만 주입
+server:
+    port: 8080
+
+spring:
+    thymeleaf:
+        cache: true # 운영에서는 템플릿 캐시 활성화
+
+was:
+    base-url: ${WAS_BASE_URL}
