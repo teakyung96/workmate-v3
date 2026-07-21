@@ -36,7 +36,7 @@ async function onDelete(): Promise<void> {
 </script>
 
 <template>
-    <div class="mx-auto max-w-3xl">
+    <div class="mx-auto h-full max-w-3xl overflow-y-auto px-6 py-8">
         <button
             class="mb-4 text-sm text-muted-foreground hover:underline"
             @click="router.push({ name: 'guide-list' })"

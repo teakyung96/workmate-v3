@@ -37,7 +37,7 @@ async function onSubmit(): Promise<void> {
 </script>
 
 <template>
-    <div class="mx-auto max-w-3xl">
+    <div class="mx-auto h-full max-w-3xl overflow-y-auto px-6 py-8">
         <h1 class="mb-6 text-2xl font-semibold">
             {{ isEdit ? '가이드 수정' : '새 가이드 문서' }}
         </h1>

@@ -21,7 +21,7 @@ function openDetail(guideSeq: number): void {
 </script>
 
 <template>
-    <div class="mx-auto max-w-3xl">
+    <div class="mx-auto h-full max-w-3xl overflow-y-auto px-6 py-8">
         <div class="mb-6 flex items-center justify-between">
             <h1 class="text-2xl font-semibold">가이드 문서</h1>
             <Button @click="router.push({ name: 'guide-new' })">+ 새 문서</Button>

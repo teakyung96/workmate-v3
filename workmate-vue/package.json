@@ -22,7 +22,9 @@
     "axios": "^1.18.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "dompurify": "^3.4.12",
     "lucide-vue-next": "^1.0.0",
+    "markdown-it": "^14.3.0",
     "pinia": "^3.0.4",
     "reka-ui": "^2.10.1",
     "tailwind-merge": "^3.6.0",
@@ -35,6 +37,7 @@
   "devDependencies": {
     "@tsconfig/node24": "^24.0.4",
     "@types/jsdom": "^28.0.3",
+    "@types/markdown-it": "^14.1.2",
     "@types/node": "^24.13.2",
     "@vitejs/plugin-vue": "^6.0.7",
     "@vitest/eslint-plugin": "^1.6.20",
