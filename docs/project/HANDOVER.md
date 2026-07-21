@@ -32,7 +32,7 @@ workmate-web (:8080) — 얇은 BFF: SPA 정적파일 서빙 + 세션 인증(Spr
    │  REST + 스트리밍 relay (내부망)
 workmate-was (:8081) — 비즈니스 로직 · JPA/MyBatis · Spring AI (Gemini 2.5 Flash)   ← v2에서 복사, 무변경
    │  JDBC
-PostgreSQL 16 + pgvector
+PostgreSQL 17 + pgvector
 ```
 
 - **3-tier 유지**: 표현(Vue SPA) / 로직(WAS) / 데이터(PostgreSQL)

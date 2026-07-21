@@ -23,7 +23,7 @@ workmate-web (:8080) ── 얇은 BFF
 workmate-was (:8081) ── 비즈니스 로직 · JPA/MyBatis · Spring AI (Gemini 2.5 Flash)
    │   ★ v2에서 복사, AI 로직 무변경. 내부망 — 브라우저에 직접 노출 안 됨
    │  JDBC
-PostgreSQL 16 + pgvector
+PostgreSQL 17 + pgvector
 ```
 
 **핵심 원칙**

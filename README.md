@@ -19,7 +19,7 @@ workmate-web (:8080)  얇은 BFF — SPA 서빙 · 세션 인증 · /api 프록�
    │  (내부망)
 workmate-was (:8081)  비즈니스 로직 · JPA/MyBatis · Spring AI
    │
-PostgreSQL 16 + pgvector
+PostgreSQL 17 + pgvector
 ```
 
 - **모노레포**: `workmate-was` / `workmate-web` / `workmate-vue`
