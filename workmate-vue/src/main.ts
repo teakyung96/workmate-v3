@@ -18,7 +18,9 @@ app.use(router)
 setUnauthorizedHandler(() => {
     const auth = useAuthStore()
     auth.clear()
-    if (router.currentRoute.value.name !== 'login') {
+    // 이미 공개 화면(로그인·회원가입)이면 리다이렉트하지 않는다 (stray 401로 튕기는 것 방지)
+    const current = router.currentRoute.value
+    if (current.meta.public !== true) {
         router.replace({ name: 'login' })
     }
 })

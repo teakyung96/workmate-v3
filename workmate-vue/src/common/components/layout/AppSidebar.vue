@@ -32,7 +32,8 @@ const { logout } = useAuth()
 const chat = useChatStore()
 
 onMounted(() => {
-    if (!chat.roomsLoaded) chat.loadRooms()
+    // 인증 상태에서만 방 목록을 불러온다 (로그아웃 상태의 불필요한 401 방지)
+    if (auth.isAuthenticated && !chat.roomsLoaded) chat.loadRooms()
 })
 
 function newChat(): void {
