@@ -8,7 +8,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { Button } from '@/common/components/ui/button'
 import { Input } from '@/common/components/ui/input'
 import { Label } from '@/common/components/ui/label'
-import { Textarea } from '@/common/components/ui/textarea'
+import MarkdownEditor from '@/common/components/form/MarkdownEditor.vue'
 import { Switch } from '@/common/components/ui/switch'
 import { Alert, AlertDescription } from '@/common/components/ui/alert'
 import { useGuideEditor } from '../composables/useGuideEditor'
@@ -49,13 +49,8 @@ async function onSubmit(): Promise<void> {
             </div>
 
             <div class="flex flex-col gap-2">
-                <Label for="content">본문 (마크다운)</Label>
-                <Textarea
-                    id="content"
-                    v-model="form.content"
-                    rows="14"
-                    placeholder="문서 내용을 입력하세요."
-                />
+                <Label>본문</Label>
+                <MarkdownEditor v-model="form.content" />
             </div>
 
             <div class="flex items-center gap-3">
