@@ -21,13 +21,21 @@ function onSend(text: string): void {
         <!-- 빈 상태: 중앙 안내 + 입력창 -->
         <div v-if="isEmpty" class="flex flex-1 flex-col items-center justify-center">
             <h1 class="mb-8 text-2xl font-semibold text-muted-foreground">무엇을 도와드릴까요?</h1>
-            <MessageInput :disabled="chat.streaming" @send="onSend" />
+            <MessageInput
+                v-model:rag-mode="chat.ragMode"
+                :disabled="chat.streaming"
+                @send="onSend"
+            />
         </div>
 
         <!-- 대화 상태: 메시지 목록 + 하단 입력창 -->
         <template v-else>
             <MessageList :messages="chat.messages" />
-            <MessageInput :disabled="chat.streaming" @send="onSend" />
+            <MessageInput
+                v-model:rag-mode="chat.ragMode"
+                :disabled="chat.streaming"
+                @send="onSend"
+            />
         </template>
     </div>
 </template>

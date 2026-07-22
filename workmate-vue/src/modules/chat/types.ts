@@ -29,6 +29,8 @@ export interface ChatStreamRequest {
     roomSeq: number | null
     message: string
     modelCode?: string
+    /** RAG 모드 — true면 가이드 문서에서 유사 청크를 검색해 답변 근거로 사용 (F4-05) */
+    ragMode?: boolean
 }
 
 /** SSE 이벤트 수신 콜백 (meta/token/source/done/error) */

@@ -13,6 +13,8 @@ export const useChatStore = defineStore('chat', () => {
     const messages = ref<ChatMessage[]>([])
     const streaming = ref(false)
     const roomsLoaded = ref(false)
+    // RAG 모드 — 켜면 전송 시 가이드 문서 검색 근거를 요청한다(출처 뱃지로 표시). 대화 내내 유지되는 선호값이라 store에 둔다
+    const ragMode = ref(false)
 
     /** 방 목록 로드 (C1) */
     async function loadRooms(): Promise<void> {
@@ -57,7 +59,7 @@ export const useChatStore = defineStore('chat', () => {
 
         try {
             await chatApi.stream(
-                { roomSeq: currentRoomSeq.value, message: trimmed },
+                { roomSeq: currentRoomSeq.value, message: trimmed, ragMode: ragMode.value },
                 {
                     onMeta: (d) => {
                         // 새 방 생성 시: 현재 방으로 지정 + 목록 맨 위에 추가
@@ -102,6 +104,7 @@ export const useChatStore = defineStore('chat', () => {
         messages,
         streaming,
         roomsLoaded,
+        ragMode,
         loadRooms,
         startNewChat,
         selectRoom,
