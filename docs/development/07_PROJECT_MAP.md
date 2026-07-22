@@ -44,6 +44,31 @@ workmate-v3/
 
 올린 순서의 역순(프론트 → WEB → WAS → DB)으로 내리면 깔끔하다.
 
+### ① 먼저 지금 뭐가 떠 있는지 확인
+
+이 프로젝트가 쓰는 포트(5173·8080·8081·5432)에 무엇이 물려 있는지 본다.
+
+- **PowerShell** (포트 + PID + 프로세스명까지):
+
+    ```powershell
+    Get-NetTCPConnection -State Listen |
+      Where-Object LocalPort -in 5173,8080,8081,5432 |
+      Select-Object LocalPort, OwningProcess,
+        @{ n='Process'; e={ (Get-Process -Id $_.OwningProcess).ProcessName } }
+    ```
+
+- **Git Bash / cmd** (`netstat`로 확인 — 맨 끝 숫자가 PID):
+
+    ```bash
+    netstat -ano | findstr "LISTENING" | findstr ":5173 :8080 :8081 :5432"
+    ```
+
+    출력 예: `TCP  0.0.0.0:8081  0.0.0.0:0  LISTENING  19932` → 여기서 **19932**가 PID.
+
+### ② 확인한 포트/PID로 종료
+
+위에서 찾은 포트나 PID로 아래처럼 내린다.
+
 | 내릴 대상            | 방법                                                                                         | 비고                                                             |
 | -------------------- | -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
 | 포그라운드로 띄운 것 | 해당 터미널에서 **`Ctrl + C`**                                                               | `bootRun`·`npm run dev`를 직접 실행한 창이 있으면 이게 제일 쉬움 |
