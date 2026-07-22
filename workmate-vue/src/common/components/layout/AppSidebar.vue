@@ -8,7 +8,7 @@
  */
 import { onMounted } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
-import { BookText, LogOut, MessageSquare, SquarePen, Trash2 } from 'lucide-vue-next'
+import { BookText, LogOut, MessageSquare, Receipt, SquarePen, Trash2 } from 'lucide-vue-next'
 import { Button } from '@/common/components/ui/button'
 import {
     AlertDialog,
@@ -67,6 +67,16 @@ function openRoom(roomSeq: number): void {
             >
                 <MessageSquare class="size-4" />
                 채팅
+            </RouterLink>
+            <RouterLink
+                :to="{ name: 'receipt' }"
+                class="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-muted-foreground hover:bg-accent hover:text-foreground"
+                :class="{
+                    'bg-accent font-medium text-foreground': route.path.startsWith('/receipt'),
+                }"
+            >
+                <Receipt class="size-4" />
+                영수증
             </RouterLink>
             <RouterLink
                 :to="{ name: 'guide-list' }"

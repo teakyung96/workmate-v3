@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { authRoutes } from '@/modules/auth/routes'
 import { chatRoutes } from '@/modules/chat/routes'
 import { guideRoutes } from '@/modules/guide/routes'
+import { receiptRoutes } from '@/modules/receipt/routes'
 import { registerGuards } from './guards'
 
 /**
@@ -15,6 +16,7 @@ const router = createRouter({
         ...authRoutes,
         ...chatRoutes,
         ...guideRoutes,
+        ...receiptRoutes,
         {
             path: '/:pathMatch(.*)*',
             name: 'not-found',
