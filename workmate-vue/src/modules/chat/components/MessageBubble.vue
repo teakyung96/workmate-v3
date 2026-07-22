@@ -5,10 +5,12 @@
  */
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
+import { RotateCw } from 'lucide-vue-next'
 import { renderMarkdown } from '@/common/utils/markdown'
 import type { ChatMessage } from '../types'
 
 const props = defineProps<{ message: ChatMessage }>()
+const emit = defineEmits<{ retry: [] }>()
 
 const isUser = computed(() => props.message.role === 'user')
 const html = computed(() => renderMarkdown(props.message.content))
@@ -32,6 +34,16 @@ const html = computed(() => renderMarkdown(props.message.content))
                     :class="{ 'text-destructive': message.error }"
                     v-html="html"
                 />
+
+                <button
+                    v-if="message.error && message.canRetry"
+                    type="button"
+                    class="mt-2 flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground"
+                    @click="emit('retry')"
+                >
+                    <RotateCw class="size-3.5" />
+                    다시 시도
+                </button>
 
                 <div v-if="message.sources?.length" class="mt-2 flex flex-wrap gap-1">
                     <RouterLink

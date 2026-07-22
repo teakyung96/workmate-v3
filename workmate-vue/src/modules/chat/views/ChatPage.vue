@@ -4,6 +4,7 @@
  * 방 목록·선택은 공통 사이드바가 담당하고, 여기선 메시지 영역 + 입력창만 그린다.
  */
 import { computed } from 'vue'
+import { X } from 'lucide-vue-next'
 import { useChatStore } from '../stores/chat.store'
 import MessageList from '../components/MessageList.vue'
 import MessageInput from '../components/MessageInput.vue'
@@ -18,6 +19,22 @@ function onSend(text: string): void {
 
 <template>
     <div class="flex h-full flex-col">
+        <!-- 요청제한(429) 안내 배너 -->
+        <div
+            v-if="chat.rateLimited"
+            class="flex items-center justify-between gap-3 border-b border-amber-500/30 bg-amber-500/10 px-4 py-2 text-sm text-amber-700 dark:text-amber-400"
+        >
+            <span>{{ chat.rateLimited }}</span>
+            <button
+                type="button"
+                class="shrink-0 rounded p-0.5 hover:bg-amber-500/20"
+                title="닫기"
+                @click="chat.dismissRateLimit"
+            >
+                <X class="size-4" />
+            </button>
+        </div>
+
         <!-- 빈 상태: 중앙 안내 + 입력창 -->
         <div v-if="isEmpty" class="flex flex-1 flex-col items-center justify-center">
             <h1 class="mb-8 text-2xl font-semibold text-muted-foreground">무엇을 도와드릴까요?</h1>
@@ -30,7 +47,7 @@ function onSend(text: string): void {
 
         <!-- 대화 상태: 메시지 목록 + 하단 입력창 -->
         <template v-else>
-            <MessageList :messages="chat.messages" />
+            <MessageList :messages="chat.messages" @retry="chat.retryLast" />
             <MessageInput
                 v-model:rag-mode="chat.ragMode"
                 :disabled="chat.streaming"

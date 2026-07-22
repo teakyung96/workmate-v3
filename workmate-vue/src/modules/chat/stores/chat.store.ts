@@ -15,6 +15,10 @@ export const useChatStore = defineStore('chat', () => {
     const roomsLoaded = ref(false)
     // RAG 모드 — 켜면 전송 시 가이드 문서 검색 근거를 요청한다(출처 뱃지로 표시). 대화 내내 유지되는 선호값이라 store에 둔다
     const ragMode = ref(false)
+    // 요청제한(429) 안내 배너 메시지 (null이면 미표시)
+    const rateLimited = ref<string | null>(null)
+    // 재시도 대상 사용자 입력 (스트림 시작 전 거절된 마지막 메시지)
+    const retryText = ref<string | null>(null)
 
     /** 방 목록 로드 (C1) */
     async function loadRooms(): Promise<void> {
@@ -51,6 +55,8 @@ export const useChatStore = defineStore('chat', () => {
         const trimmed = text.trim()
         if (streaming.value || trimmed === '') return
 
+        // 새 전송 시작 — 이전 요청제한 배너는 걷어낸다
+        rateLimited.value = null
         messages.value.push({ role: 'user', content: trimmed })
         messages.value.push({ role: 'assistant', content: '', streaming: true })
         // 배열에 들어간 반응형 프록시를 잡아야 이후 변경이 화면에 반영된다
@@ -85,7 +91,13 @@ export const useChatStore = defineStore('chat', () => {
                     onError: (d) => {
                         ai.streaming = false
                         ai.error = true
+                        // status가 있으면 스트림 시작 전 요청 거절 → 저장된 게 없어 재시도 안전
+                        const preSave = d.status !== undefined
+                        ai.canRetry = preSave
                         if (!ai.content) ai.content = d.message
+                        if (preSave) retryText.value = trimmed
+                        // 429(요청제한)는 상단 배너로도 안내
+                        if (d.status === 429) rateLimited.value = d.message
                     },
                 },
             )
@@ -98,6 +110,26 @@ export const useChatStore = defineStore('chat', () => {
         }
     }
 
+    /**
+     * 마지막 실패(요청 거절) 메시지를 재시도한다.
+     * 스트림 시작 전 거절이라 DB에 저장된 게 없으므로, 낙관적으로 추가했던 사용자·AI 말풍선 한 쌍을
+     * 걷어내고 같은 내용을 다시 전송한다(중복 저장 방지).
+     */
+    async function retryLast(): Promise<void> {
+        if (streaming.value) return
+        const last = messages.value[messages.value.length - 1]
+        if (!last || last.role !== 'assistant' || !last.canRetry) return
+        const text = retryText.value ?? ''
+        messages.value.splice(messages.value.length - 2, 2)
+        retryText.value = null
+        if (text) await sendMessage(text)
+    }
+
+    /** 요청제한 배너 닫기 */
+    function dismissRateLimit(): void {
+        rateLimited.value = null
+    }
+
     return {
         rooms,
         currentRoomSeq,
@@ -105,6 +137,9 @@ export const useChatStore = defineStore('chat', () => {
         streaming,
         roomsLoaded,
         ragMode,
+        rateLimited,
+        retryLast,
+        dismissRateLimit,
         loadRooms,
         startNewChat,
         selectRoom,

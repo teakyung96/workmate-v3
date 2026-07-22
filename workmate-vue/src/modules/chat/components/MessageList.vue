@@ -8,6 +8,7 @@ import MessageBubble from './MessageBubble.vue'
 import type { ChatMessage } from '../types'
 
 const props = defineProps<{ messages: ChatMessage[] }>()
+const emit = defineEmits<{ retry: [] }>()
 
 const scrollEl = ref<HTMLElement | null>(null)
 
@@ -43,7 +44,7 @@ watch(
                         />
                     </div>
                 </div>
-                <MessageBubble v-else :message="message" />
+                <MessageBubble v-else :message="message" @retry="emit('retry')" />
             </template>
         </div>
     </div>

@@ -20,6 +20,8 @@ export interface ChatMessage {
     streaming?: boolean
     /** 응답 실패 여부 (재시도 표시용) */
     error?: boolean
+    /** 재시도 가능 여부 — 스트림 시작 전 요청 거절(저장된 게 없음)일 때만 true */
+    canRetry?: boolean
     /** RAG 출처 목록 */
     sources?: ChatSource[]
 }
@@ -39,5 +41,6 @@ export interface ChatStreamHandlers {
     onToken?: (data: { delta: string }) => void
     onSource?: (data: ChatSource) => void
     onDone?: (data: { messageSeq: number; modelName: string }) => void
-    onError?: (data: { message: string }) => void
+    /** status 가 있으면 스트림 시작 전 요청 거절(재시도 안전), 429 면 요청제한 */
+    onError?: (data: { message: string; status?: number }) => void
 }
